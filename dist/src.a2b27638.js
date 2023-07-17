@@ -3476,9 +3476,19 @@ var getData = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
+function calcNewValue(arrayOfValues) {
+  var sum = 0;
+  for (var i = 0; i < arrayOfValues.length - 1; i++) {
+    sum = sum + (arrayOfValues[i + 1] - arrayOfValues[i]);
+  }
+  sum = sum / (arrayOfValues.length - 1);
+  sum = sum + arrayOfValues[arrayOfValues.length - 1];
+  sum = Math.round(sum);
+  return sum;
+}
 var buildChart = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var data, years, values, chartData;
+    var data, years, values, newValue, chartData;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
@@ -3488,6 +3498,9 @@ var buildChart = /*#__PURE__*/function () {
           data = _context2.sent;
           years = Object.values(data.dimension.Vuosi.category.label);
           values = data.value;
+          newValue = calcNewValue(values); // predicted values:
+          years.push("2022");
+          values.push(newValue);
           chartData = {
             labels: years,
             datasets: [{
@@ -3502,7 +3515,7 @@ var buildChart = /*#__PURE__*/function () {
             height: 450,
             colors: ["#eb5146"]
           });
-        case 7:
+        case 10:
         case "end":
           return _context2.stop();
       }
@@ -3513,9 +3526,9 @@ var buildChart = /*#__PURE__*/function () {
   };
 }();
 function searchString(str, arrayStr) {
-  if (str.length == 0) {
+  /*if (str.length == 0) {
     return -1;
-  }
+  }*/
   for (var i = 0; i < arrayStr.length; i++) {
     if (arrayStr[i].toUpperCase().match(str.toUpperCase())) {
       return i;
