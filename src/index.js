@@ -118,9 +118,9 @@ const buildChart = async () => {
 };
 
 function searchString(str, arrayStr) {
-  /*if (str.length == 0) {
+  if (str.length == 0) {
     return -1;
-  }*/
+  }
   for (let i = 0; i < arrayStr.length; i++) {
     if (arrayStr[i].toUpperCase().match(str.toUpperCase())) {
       return i;
