@@ -1,6 +1,15 @@
 import "./styles.css";
 import { Chart } from "frappe-charts/dist/frappe-charts.min.esm";
 
+// this is for preventing the site on reloading
+var form = document.getElementById("myForm");
+function handleForm(event) {
+  event.preventDefault();
+}
+form.addEventListener("submit", handleForm);
+
+const btnSubmit = document.getElementById("submit-data");
+
 const jsonQuery = {
   query: [
     {
@@ -29,28 +38,28 @@ const jsonQuery = {
           "2018",
           "2019",
           "2020",
-          "2021"
-        ]
-      }
+          "2021",
+        ],
+      },
     },
     {
       code: "Alue",
       selection: {
         filter: "item",
-        values: ["SSS"]
-      }
+        values: ["SSS"],
+      },
     },
     {
       code: "Tiedot",
       selection: {
         filter: "item",
-        values: ["vaesto"]
-      }
-    }
+        values: ["vaesto"],
+      },
+    },
   ],
   response: {
-    format: "json-stat2"
-  }
+    format: "json-stat2",
+  },
 };
 
 const getData = async () => {
@@ -59,7 +68,7 @@ const getData = async () => {
 
   const res = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(jsonQuery)
+    body: JSON.stringify(jsonQuery),
   });
 
   const data = await res.json();
@@ -68,20 +77,18 @@ const getData = async () => {
 
 const buildChart = async () => {
   const data = await getData();
-  console.log(data);
 
   const years = Object.values(data.dimension.Vuosi.category.label);
   const values = data.value;
-  console.log(values);
 
   const chartData = {
     labels: years,
     datasets: [
       {
         name: "Population",
-        values: values
-      }
-    ]
+        values: values,
+      },
+    ],
   };
 
   new Chart("#chart", {
@@ -89,8 +96,31 @@ const buildChart = async () => {
     data: chartData,
     type: "line",
     height: 450,
-    colors: ["#eb5146"]
+    colors: ["#eb5146"],
   });
 };
 
-buildChart();
+function searchString(str, arrayStr) {
+  for (let i = 0; i < arrayStr.length; i++) {
+    if (arrayStr[i].toUpperCase().match(str.toUpperCase())) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+btnSubmit.addEventListener("click", async () => {
+  const muni = document.getElementById("input-area").value;
+
+  const url =
+    "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px";
+  const res = await fetch(url);
+  const data = await res.json();
+  const names = data.variables[1].valueTexts;
+  const codes = data.variables[1].values;
+
+  const index = searchString(muni, names);
+
+  jsonQuery.query[1].selection.values[0] = codes[index];
+  buildChart();
+});
