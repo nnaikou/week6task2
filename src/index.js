@@ -86,17 +86,13 @@ function calcNewValue(arrayOfValues) {
   return sum;
 }
 
-const buildChart = async () => {
+let predictValueButton = null;
+
+async function buildChart() {
   const data = await getData();
 
   const years = Object.values(data.dimension.Vuosi.category.label);
   const values = data.value;
-
-  let newValue = calcNewValue(values);
-
-  // predicted values:
-  years.push("2022");
-  values.push(newValue);
 
   const chartData = {
     labels: years,
@@ -115,7 +111,43 @@ const buildChart = async () => {
     height: 450,
     colors: ["#eb5146"],
   });
-};
+
+  if (predictValueButton == null) {
+    console.log("Sitä ei oo vielä");
+    predictValueButton = document.createElement("button");
+    predictValueButton.setAttribute("id", "add-data");
+    predictValueButton.innerText = "Add predicted value";
+    let htmlBody = document.getElementById("htmlbody");
+    htmlBody.appendChild(predictValueButton);
+  }
+
+  (await predictValueButton).addEventListener("click", () => {
+    let newValue = calcNewValue(values);
+
+    // predicted values:
+    let newYearValue = (parseInt(years[years.length - 1]) + 1).toString();
+    years.push(newYearValue);
+    values.push(newValue);
+
+    const chartData = {
+      labels: years,
+      datasets: [
+        {
+          name: "Population",
+          values: values,
+        },
+      ],
+    };
+
+    new Chart("#chart", {
+      title: "Population growth",
+      data: chartData,
+      type: "line",
+      height: 450,
+      colors: ["#eb5146"],
+    });
+  });
+}
 
 function searchString(str, arrayStr) {
   if (str.length == 0) {

@@ -3486,21 +3486,22 @@ function calcNewValue(arrayOfValues) {
   sum = Math.round(sum);
   return sum;
 }
-var buildChart = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-    var data, years, values, newValue, chartData;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+var predictValueButton = null;
+function buildChart() {
+  return _buildChart.apply(this, arguments);
+}
+function _buildChart() {
+  _buildChart = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    var data, years, values, chartData, htmlBody;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          _context2.next = 2;
+          _context3.next = 2;
           return getData();
         case 2:
-          data = _context2.sent;
+          data = _context3.sent;
           years = Object.values(data.dimension.Vuosi.category.label);
           values = data.value;
-          newValue = calcNewValue(values); // predicted values:
-          years.push("2022");
-          values.push(newValue);
           chartData = {
             labels: years,
             datasets: [{
@@ -3515,16 +3516,47 @@ var buildChart = /*#__PURE__*/function () {
             height: 450,
             colors: ["#eb5146"]
           });
+          if (predictValueButton == null) {
+            console.log("Sitä ei oo vielä");
+            predictValueButton = document.createElement("button");
+            predictValueButton.setAttribute("id", "add-data");
+            predictValueButton.innerText = "Add predicted value";
+            htmlBody = document.getElementById("htmlbody");
+            htmlBody.appendChild(predictValueButton);
+          }
+          _context3.next = 10;
+          return predictValueButton;
         case 10:
+          _context3.sent.addEventListener("click", function () {
+            var newValue = calcNewValue(values);
+
+            // predicted values:
+            var newYearValue = (parseInt(years[years.length - 1]) + 1).toString();
+            years.push(newYearValue);
+            values.push(newValue);
+            var chartData = {
+              labels: years,
+              datasets: [{
+                name: "Population",
+                values: values
+              }]
+            };
+            new _frappeChartsMin.Chart("#chart", {
+              title: "Population growth",
+              data: chartData,
+              type: "line",
+              height: 450,
+              colors: ["#eb5146"]
+            });
+          });
+        case 11:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   }));
-  return function buildChart() {
-    return _ref2.apply(this, arguments);
-  };
-}();
+  return _buildChart.apply(this, arguments);
+}
 function searchString(str, arrayStr) {
   if (str.length == 0) {
     return -1;
@@ -3536,21 +3568,21 @@ function searchString(str, arrayStr) {
   }
   return -1;
 }
-btnSubmit.addEventListener("click", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+btnSubmit.addEventListener("click", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
   var muni, url, res, data, names, codes, index;
-  return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-    while (1) switch (_context3.prev = _context3.next) {
+  return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+    while (1) switch (_context2.prev = _context2.next) {
       case 0:
         muni = document.getElementById("input-area").value;
         url = "https://statfin.stat.fi/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px";
-        _context3.next = 4;
+        _context2.next = 4;
         return fetch(url);
       case 4:
-        res = _context3.sent;
-        _context3.next = 7;
+        res = _context2.sent;
+        _context2.next = 7;
         return res.json();
       case 7:
-        data = _context3.sent;
+        data = _context2.sent;
         names = data.variables[1].valueTexts;
         codes = data.variables[1].values;
         index = searchString(muni, names);
@@ -3558,9 +3590,9 @@ btnSubmit.addEventListener("click", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*
         buildChart();
       case 13:
       case "end":
-        return _context3.stop();
+        return _context2.stop();
     }
-  }, _callee3);
+  }, _callee2);
 })));
 },{"./styles.css":"src/styles.css","frappe-charts/dist/frappe-charts.min.esm":"node_modules/frappe-charts/dist/frappe-charts.min.esm.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
